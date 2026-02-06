@@ -1,4 +1,5 @@
-import pino from 'pino';
+import { pino } from 'pino';
+import type { Logger as PinoLogger } from 'pino';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname } from 'path';
 
@@ -17,7 +18,7 @@ export interface LogContext {
 }
 
 export class Logger {
-  private logger: pino.Logger;
+  private logger: PinoLogger;
   private service: string;
   private logFilePath?: string;
 
@@ -35,7 +36,7 @@ export class Logger {
       },
       timestamp: pino.stdTimeFunctions.isoTime,
       formatters: {
-        level: (label) => {
+        level: (label: string): { level: string } => {
           return { level: label };
         },
       },

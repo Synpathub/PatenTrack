@@ -2,12 +2,12 @@ import type { FastifyPluginAsync } from 'fastify';
 import websocket from '@fastify/websocket';
 import { createLogger } from '@patentrack/shared';
 
-const logger = createLogger('websocket');
+const logger = createLogger({ service: 'websocket' });
 
 export const websocketPlugin: FastifyPluginAsync = async (fastify) => {
   await fastify.register(websocket);
 
-  fastify.get('/ws', { websocket: true }, (connection, request) => {
+  fastify.get('/ws', { websocket: true }, (connection, _request) => {
     logger.info('WebSocket connection established');
 
     connection.socket.on('message', (message) => {

@@ -8,8 +8,8 @@ import {
   index,
   integer,
   boolean,
-  decimal,
   date,
+  PgTable,
 } from 'drizzle-orm/pg-core';
 
 export const transactionTypeEnum = pgEnum('transaction_type', [
@@ -40,7 +40,7 @@ export const entityTypeEnum = pgEnum('entity_type', [
   'UNIVERSITY',
 ]);
 
-export function createTenantSchema(schemaName: string) {
+export function createTenantSchema(schemaName: string): Record<string, PgTable> {
   const companies = pgTable(
     `${schemaName}.companies`,
     {

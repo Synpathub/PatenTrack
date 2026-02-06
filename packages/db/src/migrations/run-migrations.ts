@@ -1,7 +1,7 @@
 import { getConnection } from '../utils/connection.js';
 import { createLogger } from '@patentrack/shared';
 
-const logger = createLogger('migrations');
+const logger = createLogger({ service: 'migrations' });
 
 async function runMigrations(): Promise<void> {
   logger.info('Starting database migrations');

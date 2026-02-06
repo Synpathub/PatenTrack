@@ -4,7 +4,7 @@ import { createLogger } from '@patentrack/shared';
 import bcrypt from 'bcrypt';
 import { UserRole } from '@patentrack/core';
 
-const logger = createLogger('auth-routes');
+const logger = createLogger({ service: 'auth-routes' });
 
 export const authRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post<{
@@ -52,7 +52,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       tenantId: user.tenant_id,
     });
 
-    logger.info('User logged in', { userId: user.id, email: user.email });
+    logger.info('User logged in', { userId: parseInt(user.id, 10), email: user.email });
 
     return reply.send({
       token,
@@ -110,7 +110,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
       tenantId: user.tenant_id,
     });
 
-    logger.info('Admin logged in', { userId: user.id, email: user.email });
+    logger.info('Admin logged in', { userId: parseInt(user.id, 10), email: user.email });
 
     return reply.send({
       token,
@@ -137,7 +137,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   });
 
   fastify.post('/logout', { onRequest: [fastify.authenticate] }, async (request, reply) => {
-    logger.info('User logged out', { userId: request.user.userId });
+    logger.info('User logged out', { userId: parseInt(request.user.userId as string, 10) });
     return reply.send({ message: 'Logged out successfully' });
   });
 
@@ -205,24 +205,24 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
     const [newUser] = await sql<
       Array<{ id: string }>
     >`INSERT INTO users (tenant_id, email, password_hash, first_name, last_name, role) 
-      VALUES (${tenantId}, ${email}, ${passwordHash}, ${firstName}, ${lastName}, 'CUSTOMER_USER') 
+      VALUES (${tenantId}, ${email}, ${passwordHash}, ${firstName}, ${lastName}, 'CUSTOMER_VIEWER') 
       RETURNING id`;
 
-    logger.info('User registered', { userId: newUser.id, email });
+    logger.info('User registered', { userId: parseInt(newUser!.id, 10), email });
 
     const token = fastify.jwt.sign({
-      userId: newUser.id,
+      userId: newUser!.id,
       email,
-      role: UserRole.CUSTOMER_USER,
+      role: UserRole.CUSTOMER_VIEWER,
       tenantId,
     });
 
     return reply.code(201).send({
       token,
       user: {
-        id: newUser.id,
+        id: newUser!.id,
         email,
-        role: UserRole.CUSTOMER_USER,
+        role: UserRole.CUSTOMER_VIEWER,
         tenantId,
       },
     });

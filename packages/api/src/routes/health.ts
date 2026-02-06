@@ -1,12 +1,9 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { getConnection } from '@patentrack/db';
-import { createLogger } from '@patentrack/shared';
 import { loadConfig } from '@patentrack/shared';
 
-const logger = createLogger('health-routes');
-
 export const healthRoutes: FastifyPluginAsync = async (fastify) => {
-  fastify.get('/health', async (request, reply) => {
+  fastify.get('/health', async (_request, reply) => {
     return reply.send({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -14,7 +11,7 @@ export const healthRoutes: FastifyPluginAsync = async (fastify) => {
     });
   });
 
-  fastify.get('/ready', async (request, reply) => {
+  fastify.get('/ready', async (_request, reply) => {
     const checks: Record<
       string,
       { status: 'ok' | 'error'; message?: string; latency?: number }

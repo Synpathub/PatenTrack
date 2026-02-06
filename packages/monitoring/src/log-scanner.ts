@@ -2,7 +2,7 @@ import { createLogger } from '@patentrack/shared';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-const logger = createLogger('log-scanner');
+const logger = createLogger({ service: 'log-scanner' });
 
 export interface LogScanResult {
   totalLines: number;
@@ -44,7 +44,8 @@ export async function scanRecentLogs(
       scannedAt: new Date().toISOString(),
     };
   } catch (error) {
-    logger.error('Failed to scan log file', { error, logFilePath });
+    const typedError = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to scan log file', { error: typedError, logFilePath });
     throw error;
   }
 }
@@ -67,7 +68,8 @@ export async function scanAllLogs(
 
     return results;
   } catch (error) {
-    logger.error('Failed to scan logs directory', { error, logsDirectory });
+    const typedError = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to scan logs directory', { error: typedError, logsDirectory });
     throw error;
   }
 }

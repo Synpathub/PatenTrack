@@ -6,7 +6,7 @@ import {
 import { createLogger } from '@patentrack/shared';
 import bcrypt from 'bcrypt';
 
-const logger = createLogger('seed');
+const logger = createLogger({ service: 'seed' });
 
 async function seed(): Promise<void> {
   logger.info('Starting database seeding');
@@ -37,11 +37,11 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO users (tenant_id, email, password_hash, first_name, last_name, role, is_active)
     VALUES 
-      (${acmeTenant.id}, 'admin@acme.com', ${adminPasswordHash}, 'Admin', 'User', 'ADMIN', true),
-      (${acmeTenant.id}, 'john.doe@acme.com', ${userPasswordHash}, 'John', 'Doe', 'CUSTOMER_ADMIN', true),
-      (${acmeTenant.id}, 'jane.smith@acme.com', ${userPasswordHash}, 'Jane', 'Smith', 'CUSTOMER_USER', true),
-      (${techTenant.id}, 'admin@techventures.com', ${adminPasswordHash}, 'Tech', 'Admin', 'ADMIN', true),
-      (${techTenant.id}, 'user@techventures.com', ${userPasswordHash}, 'Tech', 'User', 'CUSTOMER_USER', true)
+      (${acmeTenant!.id}, 'admin@acme.com', ${adminPasswordHash}, 'Admin', 'User', 'ADMIN', true),
+      (${acmeTenant!.id}, 'john.doe@acme.com', ${userPasswordHash}, 'John', 'Doe', 'CUSTOMER_ADMIN', true),
+      (${acmeTenant!.id}, 'jane.smith@acme.com', ${userPasswordHash}, 'Jane', 'Smith', 'CUSTOMER_USER', true),
+      (${techTenant!.id}, 'admin@techventures.com', ${adminPasswordHash}, 'Tech', 'Admin', 'ADMIN', true),
+      (${techTenant!.id}, 'user@techventures.com', ${userPasswordHash}, 'Tech', 'User', 'CUSTOMER_USER', true)
     ON CONFLICT (email) DO NOTHING
   `;
 
@@ -100,9 +100,9 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO ingestion_jobs (tenant_id, source, status, total_records, processed_records, failed_records)
     VALUES 
-      (${acmeTenant.id}, 'USPTO_BULK', 'COMPLETED', 1000, 1000, 0),
-      (${acmeTenant.id}, 'MANUAL_UPLOAD', 'COMPLETED', 50, 50, 0),
-      (${techTenant.id}, 'USPTO_BULK', 'RUNNING', 500, 250, 5)
+      (${acmeTenant!.id}, 'USPTO_BULK', 'COMPLETED', 1000, 1000, 0),
+      (${acmeTenant!.id}, 'MANUAL_UPLOAD', 'COMPLETED', 50, 50, 0),
+      (${techTenant!.id}, 'USPTO_BULK', 'RUNNING', 500, 250, 5)
   `;
 
   logger.info('Creating tenant schemas');
@@ -145,7 +145,7 @@ async function seed(): Promise<void> {
       '2020-06-20',
       '2040-06-20',
       'ACTIVE',
-      ${ibm.id}
+      ${ibm!.id}
     )
     RETURNING id
   `;
@@ -160,7 +160,7 @@ async function seed(): Promise<void> {
       '2019-09-15',
       '2039-09-15',
       'ACTIVE',
-      ${microsoft.id}
+      ${microsoft!.id}
     )
     RETURNING id
   `;
@@ -175,32 +175,21 @@ async function seed(): Promise<void> {
       '2019-01-25',
       '2039-01-25',
       'ACTIVE',
-      ${google.id}
+      ${google!.id}
     )
     RETURNING id
   `;
 
-  const [patent4] = await sql`
-    INSERT INTO tenant_acme.patents (patent_number, title, abstract, filing_date, issue_date, status, current_owner_id)
-    VALUES (
-      'US9876543B2',
-      'Method for optimizing database queries',
-      'Techniques for improving query performance in relational databases.',
-      '2014-05-12',
-      '2017-11-08',
-      'EXPIRED',
-      ${ibm.id}
-    )
-    RETURNING id
-  `;
+
+
 
   await sql`
     INSERT INTO tenant_acme.transactions (patent_id, type, from_entity_id, to_entity_id, recorded_date, execution_date, conveyance_text, reel_frame)
     VALUES (
-      ${patent1.id},
+      ${patent1!.id},
       'ASSIGNMENT',
       NULL,
-      ${ibm.id},
+      ${ibm!.id},
       '2020-06-21',
       '2020-06-20',
       'Assignment of entire right, title, and interest',
@@ -211,10 +200,10 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO tenant_acme.transactions (patent_id, type, from_entity_id, to_entity_id, recorded_date, execution_date, conveyance_text, reel_frame)
     VALUES (
-      ${patent2.id},
+      ${patent2!.id},
       'ASSIGNMENT',
       NULL,
-      ${microsoft.id},
+      ${microsoft!.id},
       '2019-09-16',
       '2019-09-15',
       'Assignment of entire right, title, and interest',
@@ -237,8 +226,8 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO tenant_acme.normalized_entities (entity_id, company_id, normalized_name, confidence, method)
     VALUES 
-      (${entity1.id}, ${ibm.id}, 'IBM', 95, 'ml-model'),
-      (${entity2.id}, ${microsoft.id}, 'Microsoft', 95, 'ml-model')
+      (${entity1!.id}, ${ibm!.id}, 'IBM', 95, 'ml-model'),
+      (${entity2!.id}, ${microsoft!.id}, 'Microsoft', 95, 'ml-model')
   `;
 
   const [inventor1] = await sql`
@@ -262,45 +251,45 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO tenant_acme.patent_inventors (patent_id, inventor_id, sequence)
     VALUES 
-      (${patent1.id}, ${inventor1.id}, 1),
-      (${patent1.id}, ${inventor2.id}, 2),
-      (${patent2.id}, ${inventor2.id}, 1),
-      (${patent2.id}, ${inventor3.id}, 2),
-      (${patent3.id}, ${inventor3.id}, 1)
+      (${patent1!.id}, ${inventor1!.id}, 1),
+      (${patent1!.id}, ${inventor2!.id}, 2),
+      (${patent2!.id}, ${inventor2!.id}, 1),
+      (${patent2!.id}, ${inventor3!.id}, 2),
+      (${patent3!.id}, ${inventor3!.id}, 1)
   `;
 
   await sql`
     INSERT INTO tenant_acme.patent_families (family_id, patent_id)
     VALUES 
-      ('FAM-001', ${patent1.id}),
-      ('FAM-002', ${patent2.id}),
-      ('FAM-002', ${patent3.id})
+      ('FAM-001', ${patent1!.id}),
+      ('FAM-002', ${patent2!.id}),
+      ('FAM-002', ${patent3!.id})
   `;
 
   await sql`
     INSERT INTO tenant_acme.cpc_assignments (patent_id, cpc_code, section)
     VALUES 
-      (${patent1.id}, 'H04L9/00', 'H'),
-      (${patent1.id}, 'G06F21/00', 'G'),
-      (${patent2.id}, 'G06F21/00', 'G'),
-      (${patent3.id}, 'G06F', 'G')
+      (${patent1!.id}, 'H04L9/00', 'H'),
+      (${patent1!.id}, 'G06F21/00', 'G'),
+      (${patent2!.id}, 'G06F21/00', 'G'),
+      (${patent3!.id}, 'G06F', 'G')
   `;
 
   await sql`
     INSERT INTO tenant_acme.cited_patents (citing_patent_id, cited_patent_number, category)
     VALUES 
-      (${patent1.id}, 'US9000000B1', 'prior-art'),
-      (${patent1.id}, 'US9111111B2', 'prior-art'),
-      (${patent2.id}, 'US8999999B1', 'prior-art'),
-      (${patent3.id}, 'US10123456B2', 'related')
+      (${patent1!.id}, 'US9000000B1', 'prior-art'),
+      (${patent1!.id}, 'US9111111B2', 'prior-art'),
+      (${patent2!.id}, 'US8999999B1', 'prior-art'),
+      (${patent3!.id}, 'US10123456B2', 'related')
   `;
 
   await sql`
     INSERT INTO tenant_acme.title_chains (patent_id, sequence, owner_id, effective_date, status)
     VALUES 
-      (${patent1.id}, 1, ${ibm.id}, '2020-06-20', 'VALID'),
-      (${patent2.id}, 1, ${microsoft.id}, '2019-09-15', 'VALID'),
-      (${patent3.id}, 1, ${google.id}, '2019-01-25', 'VALID')
+      (${patent1!.id}, 1, ${ibm!.id}, '2020-06-20', 'VALID'),
+      (${patent2!.id}, 1, ${microsoft!.id}, '2019-09-15', 'VALID'),
+      (${patent3!.id}, 1, ${google!.id}, '2019-01-25', 'VALID')
   `;
 
   const [lawFirm1] = await sql`
@@ -318,46 +307,46 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO tenant_acme.patent_law_firms (patent_id, law_firm_id, role)
     VALUES 
-      (${patent1.id}, ${lawFirm1.id}, 'prosecution'),
-      (${patent2.id}, ${lawFirm2.id}, 'prosecution'),
-      (${patent3.id}, ${lawFirm1.id}, 'litigation')
+      (${patent1!.id}, ${lawFirm1!.id}, 'prosecution'),
+      (${patent2!.id}, ${lawFirm2!.id}, 'prosecution'),
+      (${patent3!.id}, ${lawFirm1!.id}, 'litigation')
   `;
 
   await sql`
     INSERT INTO tenant_acme.normalization_audit (entity_id, original_name, suggested_name, confidence, approved)
     VALUES 
-      (${entity1.id}, 'International Business Machines Corporation', 'IBM', 95, true),
-      (${entity2.id}, 'MICROSOFT CORP', 'Microsoft', 95, true)
+      (${entity1!.id}, 'International Business Machines Corporation', 'IBM', 95, true),
+      (${entity2!.id}, 'MICROSOFT CORP', 'Microsoft', 95, true)
   `;
 
   const [acmeUser] = await sql`SELECT id FROM users WHERE email = 'john.doe@acme.com'`;
 
   const [collection1] = await sql`
     INSERT INTO tenant_acme.collections (name, description, created_by_id)
-    VALUES ('My Favorites', 'Collection of favorite patents', ${acmeUser.id})
+    VALUES ('My Favorites', 'Collection of favorite patents', ${acmeUser!.id})
     RETURNING id
   `;
 
   await sql`
     INSERT INTO tenant_acme.collection_patents (collection_id, patent_id, added_by_id)
     VALUES 
-      (${collection1.id}, ${patent1.id}, ${acmeUser.id}),
-      (${collection1.id}, ${patent2.id}, ${acmeUser.id})
+      (${collection1!.id}, ${patent1!.id}, ${acmeUser!.id}),
+      (${collection1!.id}, ${patent2!.id}, ${acmeUser!.id})
   `;
 
   await sql`
     INSERT INTO tenant_acme.comments (patent_id, user_id, content)
     VALUES 
-      (${patent1.id}, ${acmeUser.id}, 'This patent has interesting implications for our security product.'),
-      (${patent2.id}, ${acmeUser.id}, 'Need to review the claims more carefully.')
+      (${patent1!.id}, ${acmeUser!.id}, 'This patent has interesting implications for our security product.'),
+      (${patent2!.id}, ${acmeUser!.id}, 'Need to review the claims more carefully.')
   `;
 
   await sql`
     INSERT INTO tenant_acme.activity_log (user_id, action, resource_type, resource_id, metadata)
     VALUES 
-      (${acmeUser.id}, 'view', 'patent', ${patent1.id}, '{"source": "search"}'),
-      (${acmeUser.id}, 'view', 'patent', ${patent2.id}, '{"source": "search"}'),
-      (${acmeUser.id}, 'comment', 'patent', ${patent1.id}, '{"comment_id": "some-uuid"}')
+      (${acmeUser!.id}, 'view', 'patent', ${patent1!.id}, '{"source": "search"}'),
+      (${acmeUser!.id}, 'view', 'patent', ${patent2!.id}, '{"source": "search"}'),
+      (${acmeUser!.id}, 'comment', 'patent', ${patent1!.id}, '{"comment_id": "some-uuid"}')
   `;
 
   await sql`SET search_path TO public`;
@@ -388,7 +377,7 @@ async function seed(): Promise<void> {
       '2021-08-10',
       '2041-08-10',
       'ACTIVE',
-      ${apple.id}
+      ${apple!.id}
     )
     RETURNING id
   `;
@@ -403,7 +392,7 @@ async function seed(): Promise<void> {
       '2021-05-20',
       '2041-05-20',
       'ACTIVE',
-      ${samsung.id}
+      ${samsung!.id}
     )
     RETURNING id
   `;
@@ -417,15 +406,15 @@ async function seed(): Promise<void> {
   await sql`
     INSERT INTO tenant_techventures.patent_inventors (patent_id, inventor_id, sequence)
     VALUES 
-      (${tvPatent1.id}, ${tvInventor1.id}, 1),
-      (${tvPatent2.id}, ${tvInventor1.id}, 1)
+      (${tvPatent1!.id}, ${tvInventor1!.id}, 1),
+      (${tvPatent2!.id}, ${tvInventor1!.id}, 1)
   `;
 
   await sql`
     INSERT INTO tenant_techventures.cpc_assignments (patent_id, cpc_code, section)
     VALUES 
-      (${tvPatent1.id}, 'G06F', 'G'),
-      (${tvPatent2.id}, 'H04', 'H')
+      (${tvPatent1!.id}, 'G06F', 'G'),
+      (${tvPatent2!.id}, 'H04', 'H')
   `;
 
   await sql`SET search_path TO public`;

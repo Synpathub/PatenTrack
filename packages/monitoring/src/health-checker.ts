@@ -2,11 +2,10 @@ import { createLogger, loadConfig } from '@patentrack/shared';
 import { getConnection } from '@patentrack/db';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import * as fs from 'fs/promises';
 import * as os from 'os';
 
 const execAsync = promisify(exec);
-const logger = createLogger('health-checker');
+const logger = createLogger({ service: 'health-checker' });
 
 export interface HealthCheckResult {
   service: string;

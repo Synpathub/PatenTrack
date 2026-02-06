@@ -2,7 +2,7 @@ import { Octokit } from '@octokit/rest';
 import { createLogger, loadConfig } from '@patentrack/shared';
 import type { HealthCheckResult } from './health-checker.js';
 
-const logger = createLogger('github-issue-reporter');
+const logger = createLogger({ service: 'github-issue-reporter' });
 
 export interface IssueReport {
   title: string;
@@ -48,7 +48,8 @@ export async function createGitHubIssue(
       issueNumber: response.data.number,
     };
   } catch (error) {
-    logger.error('Failed to create GitHub issue', { error });
+    const typedError = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to create GitHub issue', { error: typedError });
     throw error;
   }
 }

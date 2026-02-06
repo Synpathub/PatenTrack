@@ -2,14 +2,14 @@ import type { FastifyInstance, FastifyError, FastifyReply, FastifyRequest } from
 import { createLogger } from '@patentrack/shared';
 import { AppError } from '@patentrack/core';
 
-const logger = createLogger('error-handler');
+const logger = createLogger({ service: 'error-handler' });
 
 export function setupErrorHandler(fastify: FastifyInstance): void {
   fastify.setErrorHandler(
     (error: FastifyError | AppError, request: FastifyRequest, reply: FastifyReply) => {
       logger.error('Error occurred', {
-        error: error.message,
-        stack: error.stack,
+        error: error instanceof Error ? error : new Error(String(error)),
+        stack: error instanceof Error ? error.stack : undefined,
         url: request.url,
         method: request.method,
       });

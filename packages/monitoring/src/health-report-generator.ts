@@ -4,7 +4,7 @@ import type { HealthCheckResult } from './health-checker.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-const logger = createLogger('health-reporter');
+const logger = createLogger({ service: 'health-reporter' });
 
 export interface HealthReport {
   timestamp: string;
@@ -66,7 +66,8 @@ export async function saveHealthReport(
 
     return filepath;
   } catch (error) {
-    logger.error('Failed to save health report', { error });
+    const typedError = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to save health report', { error: typedError });
     throw error;
   }
 }

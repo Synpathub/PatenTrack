@@ -1,7 +1,7 @@
 import { getConnection } from './connection.js';
 import { createLogger } from '@patentrack/shared';
 
-const logger = createLogger('tenant-manager');
+const logger = createLogger({ service: 'tenant-manager' });
 
 export async function createTenantSchema(tenantSlug: string): Promise<void> {
   const sql = getConnection();

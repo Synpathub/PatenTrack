@@ -9,9 +9,9 @@ import { authRoutes } from './routes/auth.js';
 import { healthRoutes } from './routes/health.js';
 import { setupErrorHandler } from './middleware/error-handler.js';
 
-const logger = createLogger('api-server');
+const logger = createLogger({ service: 'api-server' });
 
-export async function createServer() {
+export async function createServer(): Promise<FastifyInstance> {
   const config = loadConfig();
 
   const fastify = Fastify({
@@ -39,7 +39,7 @@ export async function createServer() {
   return fastify;
 }
 
-async function start() {
+async function start(): Promise<void> {
   try {
     const config = loadConfig();
     const server = await createServer();
@@ -51,7 +51,7 @@ async function start() {
 
     logger.info(`Server listening on ${host}:${port}`);
   } catch (error) {
-    logger.error('Failed to start server', { error });
+    logger.error('Failed to start server', { error: error instanceof Error ? error : new Error(String(error)) });
     process.exit(1);
   }
 }
