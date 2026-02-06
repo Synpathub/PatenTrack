@@ -10,6 +10,12 @@ describe('Tenant Manager', () => {
   const testTenantSlug = 'test-tenant';
 
   beforeAll(async () => {
+    // Set required environment variables for tests
+    process.env.DATABASE_URL = 'postgresql://patentrack:patentrack_dev@localhost:5432/patentrack';
+    process.env.REDIS_URL = 'redis://localhost:6379';
+    process.env.JWT_SECRET = 'test-secret';
+    process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
+    
     try {
       await dropTenantSchema(testTenantSlug);
     } catch {

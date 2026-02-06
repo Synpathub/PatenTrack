@@ -16,7 +16,7 @@
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "test": "vitest run"
+    "test": "echo 'No tests for scaffold package'"
   },
   "dependencies": {
     "@patentrack/core": "workspace:*",

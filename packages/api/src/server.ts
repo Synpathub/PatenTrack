@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import { createLogger, loadConfig } from '@patentrack/shared';
 import { authPlugin } from './plugins/auth.js';
@@ -56,4 +56,7 @@ async function start(): Promise<void> {
   }
 }
 
-start();
+// Only start the server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  void start();
+}

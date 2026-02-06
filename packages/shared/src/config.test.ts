@@ -55,6 +55,7 @@ describe('@patentrack/shared - Config', () => {
   });
 
   it('should use default values for optional fields', () => {
+    process.env.NODE_ENV = 'development';
     process.env.DATABASE_URL = 'postgresql://localhost:5432/test';
     process.env.REDIS_URL = 'redis://localhost:6379';
     process.env.JWT_SECRET = 'test-secret';

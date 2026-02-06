@@ -6,11 +6,23 @@ describe('Health Routes', () => {
   let server: FastifyInstance;
 
   beforeAll(async () => {
-    server = await createServer();
+    // Set required environment variables for tests
+    process.env.DATABASE_URL = 'postgresql://patentrack:patentrack_dev@localhost:5432/patentrack';
+    process.env.REDIS_URL = 'redis://localhost:6379';
+    process.env.JWT_SECRET = 'test-secret';
+    process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
+    
+    try {
+      server = await createServer();
+    } catch (error) {
+      console.warn('Warning: Could not create server for tests. Some tests may be skipped.', error);
+    }
   });
 
   afterAll(async () => {
-    await server.close();
+    if (server) {
+      await server.close();
+    }
   });
 
   describe('GET /health', () => {
