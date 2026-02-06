@@ -9,7 +9,7 @@ let db: PostgresJsDatabase | null = null;
 export function getConnection(): ReturnType<typeof postgres> {
   if (!sql) {
     const config = loadConfig();
-    sql = postgres(config.DATABASE_URL, {
+    sql = postgres(config.databaseUrl, {
       max: 20,
       idle_timeout: 20,
       connect_timeout: 10,

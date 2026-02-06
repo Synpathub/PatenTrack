@@ -77,7 +77,7 @@ export async function checkRedisHealth(): Promise<HealthCheckResult> {
   try {
     const config = loadConfig();
 
-    if (!config.REDIS_URL) {
+    if (!config.redisUrl) {
       return {
         service: 'redis',
         status: 'healthy',
@@ -202,7 +202,7 @@ export async function runAllHealthChecks(): Promise<HealthCheckResult[]> {
   logger.info('Running all health checks');
 
   const config = loadConfig();
-  const apiUrl = `http://${config.API_HOST || 'localhost'}:${config.API_PORT || '3001'}`;
+  const apiUrl = `http://${config.apiHost}:${config.apiPort}`;
 
   const results = await Promise.all([
     checkApiHealth(apiUrl),

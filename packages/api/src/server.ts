@@ -22,7 +22,7 @@ export async function createServer() {
   });
 
   await fastify.register(cors, {
-    origin: config.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],
+    origin: config.corsOrigin?.split(',') || ['http://localhost:3000'],
     credentials: true,
   });
 
@@ -44,8 +44,8 @@ async function start() {
     const config = loadConfig();
     const server = await createServer();
 
-    const port = parseInt(config.API_PORT || '3001');
-    const host = config.API_HOST || '0.0.0.0';
+    const port = config.apiPort;
+    const host = config.apiHost;
 
     await server.listen({ port, host });
 

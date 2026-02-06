@@ -5,6 +5,11 @@ const configSchema = z.object({
   nodeEnv: z.enum(['development', 'production', 'test']).default('development'),
   port: z.coerce.number().int().positive().default(4200),
   
+  // API specific
+  apiPort: z.coerce.number().int().positive().default(3001),
+  apiHost: z.string().default('0.0.0.0'),
+  corsOrigin: z.string().default('http://localhost:3000'),
+  
   // Database
   databaseUrl: z.string().min(1),
   
@@ -28,6 +33,7 @@ const configSchema = z.object({
   // Optional: GitHub (for monitoring)
   githubToken: z.string().optional(),
   githubRepo: z.string().default('Synpathub/PatenTrack'),
+  githubOwner: z.string().default('Synpathub'),
   
   // Optional: File Storage
   s3Bucket: z.string().optional(),
@@ -47,6 +53,9 @@ export function loadConfig(): Config {
   const rawConfig = {
     nodeEnv: process.env.NODE_ENV,
     port: process.env.PORT,
+    apiPort: process.env.API_PORT,
+    apiHost: process.env.API_HOST,
+    corsOrigin: process.env.CORS_ORIGIN,
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
     jwtSecret: process.env.JWT_SECRET,
@@ -57,6 +66,7 @@ export function loadConfig(): Config {
     usptoBulkDataUrl: process.env.USPTO_BULK_DATA_URL,
     githubToken: process.env.GITHUB_TOKEN,
     githubRepo: process.env.GITHUB_REPO,
+    githubOwner: process.env.GITHUB_OWNER,
     s3Bucket: process.env.S3_BUCKET,
     s3AccessKey: process.env.S3_ACCESS_KEY,
     s3SecretKey: process.env.S3_SECRET_KEY,

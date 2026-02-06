@@ -39,7 +39,7 @@ export const healthRoutes: FastifyPluginAsync = async (fastify) => {
 
     try {
       const config = loadConfig();
-      if (config.REDIS_URL) {
+      if (config.redisUrl) {
         checks.redis = {
           status: 'ok',
           message: 'Redis URL configured',

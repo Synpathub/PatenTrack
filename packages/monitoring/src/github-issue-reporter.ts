@@ -16,16 +16,16 @@ export async function createGitHubIssue(
 ): Promise<{ issueUrl: string; issueNumber: number }> {
   const config = loadConfig();
 
-  if (!config.GITHUB_TOKEN) {
+  if (!config.githubToken) {
     throw new Error('GITHUB_TOKEN not configured');
   }
 
   const octokit = new Octokit({
-    auth: config.GITHUB_TOKEN,
+    auth: config.githubToken,
   });
 
-  const owner = config.GITHUB_OWNER || 'patentrack';
-  const repo = config.GITHUB_REPO || 'patentrack';
+  const owner = config.githubOwner;
+  const repo = config.githubRepo.split('/')[1] || 'patentrack';
 
   logger.info('Creating GitHub issue', { title: report.title, owner, repo });
 
