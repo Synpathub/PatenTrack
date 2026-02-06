@@ -1,0 +1,33 @@
+{
+  "name": "patentrack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PatenTrack - B2B Patent Intelligence Platform",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:migrate": "pnpm --filter @patentrack/db run migrate",
+    "db:seed": "pnpm --filter @patentrack/db run seed",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.24",
+    "@typescript-eslint/eslint-plugin": "7.1.0",
+    "@typescript-eslint/parser": "7.1.0",
+    "eslint": "8.57.0",
+    "prettier": "3.2.5",
+    "turbo": "1.12.5",
+    "typescript": "5.3.3",
+    "vitest": "1.3.1"
+  },
+  "packageManager": "pnpm@8.15.4"
+}

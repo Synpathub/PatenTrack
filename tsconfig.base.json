@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "paths": {
+      "@patentrack/core": ["./packages/core/src/index.ts"],
+      "@patentrack/shared": ["./packages/shared/src/index.ts"],
+      "@patentrack/db": ["./packages/db/src/index.ts"],
+      "@patentrack/api": ["./packages/api/src/index.ts"],
+      "@patentrack/ingestion": ["./packages/ingestion/src/index.ts"],
+      "@patentrack/processing": ["./packages/processing/src/index.ts"],
+      "@patentrack/scheduler": ["./packages/scheduler/src/index.ts"],
+      "@patentrack/monitoring": ["./packages/monitoring/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", ".turbo"]
+}
