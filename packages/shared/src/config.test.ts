@@ -5,12 +5,12 @@ describe('@patentrack/shared - Config', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    // Reset environment before each test
+    // Create a clean copy - spread does NOT deep-clone
     process.env = { ...originalEnv };
   });
 
   afterEach(() => {
-    // Restore environment after each test
+    // Restore original environment
     process.env = originalEnv;
   });
 
@@ -35,7 +35,7 @@ describe('@patentrack/shared - Config', () => {
   it('should fail when required DATABASE_URL is missing', () => {
     process.env.NODE_ENV = 'development';
     process.env.PORT = '4200';
-    // DATABASE_URL is missing
+    delete process.env.DATABASE_URL;
     process.env.REDIS_URL = 'redis://localhost:6379';
     process.env.JWT_SECRET = 'test-secret';
     process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
@@ -48,7 +48,7 @@ describe('@patentrack/shared - Config', () => {
     process.env.PORT = '4200';
     process.env.DATABASE_URL = 'postgresql://localhost:5432/test';
     process.env.REDIS_URL = 'redis://localhost:6379';
-    // JWT_SECRET is missing
+    delete process.env.JWT_SECRET;
     process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
 
     expect(() => loadConfig()).toThrow('Configuration validation failed');
